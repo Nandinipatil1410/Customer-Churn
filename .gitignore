@@ -1,0 +1,14 @@
+# Ignore virtual environments
+.venv/
+venv/
+anaconda_projects/
+
+# Ignore Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Ignore data files
+customer_churn_data.csv
+
+# Ignore model artifacts
+model.pkl
+scaler.pkl
