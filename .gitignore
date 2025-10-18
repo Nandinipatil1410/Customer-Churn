@@ -9,6 +9,3 @@ anaconda_projects/
 # Ignore data files
 customer_churn_data.csv
 
-# Ignore model artifacts
-model.pkl
-scaler.pkl
