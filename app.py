@@ -1,6 +1,7 @@
 import streamlit as st
 import joblib
 import numpy as np
+import pandas as pd
 
 scaler = joblib.load("scaler.pkl")
 model = joblib.load("model.pkl")
@@ -14,7 +15,6 @@ st.write("Please enter the values")
 st.divider()
 
 age = st.number_input("Enter age", min_value=10, max_value=100, value=30)
-
 
 tenure = st.number_input("Enter Tenure", min_value=0, max_value=130, value=10)
 
@@ -30,18 +30,25 @@ if predictButton:
 
     genderSelected = 1 if gender == "Female" else 0
 
-    X = [age, genderSelected, tenure, monthlyCharge]
+    # Use a DataFrame with column names to match the scaler's expected input
+    input_df = pd.DataFrame(
+        [[age, genderSelected, tenure, monthlyCharge]],
+        columns=["Age", "Gender", "Tenure", "MonthlyCharges"],
+    )
+    X_scaled = scaler.transform(input_df)
 
-    X1 = np.array(X)
-    X_array = scaler.transform([X1])
-
-    prediction = model.predict(X_array)[0]
+    prediction = model.predict(X_scaled)[0]
+    probabilities = model.predict_proba(X_scaled)[0]
 
     predicted = "Yes" if prediction == 1 else "No"
-    
+    confidence = probabilities[prediction] * 100
+
     st.balloons()
 
-    st.write(f"Predicted: {predicted}")
+    if prediction == 1:
+        st.error(f"⚠️ Churn Predicted (Confidence: {confidence:.1f}%)")
+    else:
+        st.success(f"✅ No Churn Predicted (Confidence: {confidence:.1f}%)")
 
 else:
     st.write("Please enter the values and use predict button")
